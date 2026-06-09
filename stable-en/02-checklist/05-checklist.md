@@ -8,45 +8,70 @@ document: OWASP Secure Coding Practices - Quick Reference Guide
 ---
 
 {% include breadcrumb.html %}
+
+**Version:** 1.0  
+**Last Updated:** 09 June 2026
+
 # Secure Coding Practices Checklist
 
-## Input validation
+This checklist provides a consolidated set of secure coding requirements 
+designed to reduce common vulnerabilities across modern applications. 
+It aligns with OWASP guidance and supports developers, reviewers, and 
+security engineers in implementing consistent, high‑assurance controls.
 
-- [ ]   Conduct all input validation on a trusted system (server side not client side)
+## Table of Contents
+- [1. Input validation](#1-input-validation)
+- [2. Output encoding](#2-output-encoding)
+- [3. Authentication and password management](#3-authentication-and-password-management)
+- [4. Session management](#4-session-management)
+- [5. Access control](#5-access-control)
+- [6. Cryptographic practices](#6-cryptographic-practices)
+- [7. Error handling and logging](#7-error-handling-and-logging)
+- [8. Data protection](#8-data-protection)
+- [9. Communication security](#9-communication-security)
+- [10. System configuration](#10-system-configuration)
+- [11. Database security](#11-database-security)
+- [12. File management](#12-file-management)
+- [13. Memory management](#13-memory-management)
+- [14. General coding practices](#14-general-coding-practices)
 
-- [ ]   Identify all data sources and classify them into trusted and untrusted
+## 1. Input validation
 
-- [ ]   Validate all data from untrusted sources (databases, file streams, etc)
+- [ ] Perform all input validation on a trusted system (server‑side, not client‑side).
 
-- [ ]   Use a centralized input validation routine for the whole application
+- [ ] Identify all data sources and classify them as trusted or untrusted.
 
-- [ ]   Specify character sets, such as UTF-8, for all input sources (canonicalization)
+- [ ] Validate all data originating from untrusted sources, including databases, file streams, and external systems.
 
-- [ ]   Encode input to a common character set before validating
+- [ ] Use a centralized input validation routine across the application.
 
-- [ ]   All validation failures should result in input rejection
+- [ ] Define and enforce expected character sets (e.g., UTF‑8) for all input sources.
 
-- [ ]   If the system supports UTF-8 extended character sets and validate after UTF-8 decoding is completed
+- [ ] Normalize input to a consistent character set before validating.
 
-- [ ]   Validate all client provided data before processing
+- [ ] Reject input whenever validation checks fail.
 
-- [ ]   Verify that protocol header values in both requests and responses contain only ASCII characters
+- [ ] Validate only after UTF‑8 decoding is complete when extended character sets are supported.
 
-- [ ]   Validate data from redirects
+- [ ] Validate all client‑provided data before processing.
 
-- [ ]   Validate for expected data types using an \"allow\" list rather than a \"deny\" list
+- [ ] Ensure protocol header values in requests and responses contain only ASCII characters.
 
-- [ ]   Validate data range
+- [ ] Validate data received through redirects.
 
-- [ ]   Validate data length
+- [ ] Validate input using allowlists for expected data types rather than denylists.
 
-- [ ]   If any potentially hazardous input must be allowed then implement additional controls
+- [ ] Validate data ranges.
 
-- [ ]   If the standard validation routine cannot address some inputs then use extra discrete checks
+- [ ] Validate data lengths.
 
-- [ ]   Utilize canonicalization to address obfuscation attacks
+- [ ] Apply additional controls when potentially hazardous input must be accepted.
 
-## Output encoding
+- [ ] Use discrete, specialized checks when standard validation routines cannot fully address certain inputs.
+
+- [ ] Apply canonicalization to mitigate obfuscation attacks.
+
+## 2. Output encoding
 
 - [ ]   Conduct all output encoding on a trusted system (server side not client side)
 
@@ -62,517 +87,403 @@ document: OWASP Secure Coding Practices - Quick Reference Guide
 
 - [ ]   Sanitize all output of untrusted data to operating system commands
 
-## Authentication and password management
+## 3. Authentication and password management
 
-- [ ]   Require authentication for all pages and resources, except those
-    specifically intended to be public
+- [ ] Require authentication for all pages and resources except those explicitly intended to be public.
 
-- [ ]   All authentication controls must be enforced on a trusted system
+- [ ] Enforce all authentication controls on a trusted system.
 
-- [ ]   Establish and utilize standard, tested, authentication services whenever possible
+- [ ] Use standard, well‑tested authentication services whenever possible.
 
-- [ ]   Use a centralized implementation for all authentication controls,
-    including libraries that call external authentication services
+- [ ] Centralize all authentication logic, including libraries that call external authentication services.
 
-- [ ]   Segregate authentication logic from the resource being requested and
-    use redirection to and from the centralized authentication control
+- [ ] Separate authentication logic from requested resources and use redirection to and from centralized authentication controls.
 
-- [ ]   All authentication controls should fail securely
+- [ ] Ensure all authentication controls fail securely.
 
-- [ ]   All administrative and account management functions must be at least
-    as secure as the primary authentication mechanism
+- [ ] Ensure administrative and account‑management functions are protected with controls at least as strong as primary authentication.
 
-- [ ]   If your application manages a credential store, use cryptographically strong one-way salted hashes
+- [ ] Use cryptographically strong, one‑way salted hashes when managing a credential store.
 
-- [ ]   Password hashing must be implemented on a trusted system server side not client side)
+- [ ] Perform password hashing only on a trusted system (server‑side).
 
-- [ ]   Validate the authentication data only on completion of all data input
+- [ ] Validate authentication data only after all required input has been received.
 
-- [ ]   Authentication failure responses should not indicate which part of the authentication data was incorrect
+- [ ] Ensure authentication failure responses do not reveal which part of the credentials was incorrect.
 
-- [ ]   Utilize authentication for connections to external systems that involve sensitive information or functions
+- [ ] Require authentication for connections to external systems involving sensitive information or functions.
 
-- [ ]   Authentication credentials for accessing services external to the
-    application should be stored in a secure store
+- [ ] Store authentication credentials for external services in a secure credential store.
 
-- [ ]   Use only HTTP POST requests to transmit authentication credentials
+- [ ] Use only HTTP POST requests to transmit authentication credentials.
 
-- [ ]   Only send non-temporary passwords over an encrypted connection or as encrypted data
+- [ ] Transmit non‑temporary passwords only over encrypted channels or as encrypted data.
 
-- [ ]   Enforce password complexity requirements established by policy or regulation
+- [ ] Enforce password complexity requirements defined by policy or regulation.
 
-- [ ]   Enforce password length requirements established by policy or regulation
+- [ ] Enforce password length requirements defined by policy or regulation.
 
-- [ ]   Password entry should be obscured on the user\'s screen
+- [ ] Obscure password entry on the user’s screen.
 
-- [ ]   Enforce account disabling after an established number of invalid login attempts
+- [ ] Disable accounts after a defined number of invalid login attempts.
 
-- [ ]   Password reset and changing operations require the same level of
-    controls as account creation and authentication
+- [ ] Apply the same security controls to password reset and password change operations as to account creation and authentication.
 
-- [ ]   Password reset questions should support sufficiently random answers
+- [ ] Ensure password reset questions support sufficiently random and unpredictable answers.
 
-- [ ]   If using email based resets, only send email to a pre-registered
-    address with a temporary link/password
+- [ ] For email‑based resets, send reset links or temporary passwords only to pre‑registered addresses.
 
-- [ ]   Temporary passwords and links should have a short expiration time
+- [ ] Ensure temporary passwords and reset links have short expiration times.
 
-- [ ]   Enforce the changing of temporary passwords on the next use
+- [ ] Require temporary passwords to be changed on next use.
 
-- [ ]   Notify users when a password reset occurs
+- [ ] Notify users when a password reset occurs.
 
-- [ ]   Prevent password re-use
+- [ ] Prevent password reuse according to policy.
 
-- [ ]   Passwords should be at least one day old before they can be changed,
-    to prevent attacks on password re-use
+- [ ] Enforce a minimum password age to reduce rapid password‑cycling attacks.
 
-- [ ]   Enforce password changes based on requirements established in policy
-    or regulation, with the time between resets administratively controlled
+- [ ] Enforce periodic password changes only when required by policy or regulation.
 
-- [ ]   Disable \"remember me\" functionality for password fields
+- [ ] Disable “remember me” functionality for password fields.
 
-- [ ]   The last use (successful or unsuccessful) of a user account should
-    be reported to the user at their next successful login
+- [ ] Display the last successful or unsuccessful login time to the user after authentication.
 
-- [ ]   Implement monitoring to identify attacks against multiple user accounts, utilizing the same password
+- [ ] Implement monitoring to identify attacks against multiple user accounts, especially those using the same password.
+     
+## 4. Session management
 
-- [ ]   Change all vendor-supplied default passwords and user IDs or disable the associated accounts
+- [ ] Use only the server or framework’s built‑in session management controls, and recognize only those session identifiers as valid.
 
-- [ ]   Re-authenticate users prior to performing critical operations
+- [ ] Create all session identifiers on a trusted system (server‑side).
 
-- [ ]   Use Multi-Factor Authentication for highly sensitive or high value transactional accounts
+- [ ] Use well‑vetted algorithms that generate sufficiently random and unpredictable session identifiers.
 
-- [ ]   If using third party code for authentication, inspect the code
-    carefully to ensure it is not affected by any malicious code
+- [ ] Set cookie domain and path attributes to the most restrictive values appropriate for the application.
 
-## Session management
+- [ ] Ensure logout functionality fully terminates the associated session or connection.
 
-- [ ]   Use the server or framework's session management controls. The
-    application should recognize only these session identifiers as
-    valid
+- [ ] Provide logout functionality on all pages that require authorization.
 
-- [ ]   Session identifier creation must always be done on a trusted system (server side not client side)
+- [ ] Configure session inactivity timeouts to be as short as practical while balancing business requirements.
 
-- [ ]   Session management controls should use well vetted algorithms that
-    ensure sufficiently random session identifiers
+- [ ] Disallow persistent logins and enforce periodic session termination, even during active use.
 
-- [ ]   Set the domain and path for cookies containing authenticated session
-    identifiers to an appropriately restricted value for the site
+- [ ] Close any pre‑login session and establish a new session after successful authentication.
 
-- [ ]   Logout functionality should fully terminate the associated session or connection
+- [ ] Generate a new session identifier upon any re‑authentication event.
 
-- [ ]   Logout functionality should be available from all pages protected by authorization
+- [ ] Prevent concurrent logins using the same user ID.
 
-- [ ]   Establish a session inactivity timeout that is as short as possible,
-    based on balancing risk and business functional requirements
+- [ ] Do not expose session identifiers in URLs, error messages, or logs.
 
-- [ ]   Disallow persistent logins and enforce periodic session
-    terminations, even when the session is active
+- [ ] Implement access controls to protect server‑side session data from unauthorized access by other users of the server.
 
-- [ ]   If a session was established before login, close that session and
-    establish a new session after a successful login
+- [ ] Periodically generate a new session identifier and deactivate the old one.
 
-- [ ]   Generate a new session identifier on any re-authentication
+- [ ] Generate a new session identifier when connection security changes (e.g., HTTP → HTTPS).
 
-- [ ]   Do not allow concurrent logins with the same user ID
+- [ ] Use HTTPS consistently rather than switching between HTTP and HTTPS.
 
-- [ ]   Do not expose session identifiers in URLs, error messages or logs
+- [ ] Supplement standard session management for sensitive operations with
 
-- [ ]   Implement appropriate access controls to protect server side session data
-    from unauthorized access from other users of the server
+## 5. Access control
 
-- [ ]   Generate a new session identifier and deactivate the old one periodically
+- [ ] Use only trusted server‑side objects (e.g., session objects) when making authorization decisions.
 
-- [ ]   Generate a new session identifier if the connection security changes
-    from HTTP to HTTPS, as can occur during authentication
-    
-- [ ]   Consistently utilize HTTPS rather than switching between HTTP to HTTPS
+- [ ] Use a single, centralized component to enforce access authorization, including libraries that call external authorization services.
 
-- [ ]   Supplement standard session management for sensitive server-side
-    operations, like account management, by utilizing per-session
-    strong random tokens or parameters
+- [ ] Ensure all access control mechanisms fail securely.
 
-- [ ]   Supplement standard session management for highly sensitive or
-    critical operations by utilizing per-request, as opposed to
-    per-session, strong random tokens or parameters
+- [ ] Deny all access if the application cannot retrieve its security configuration.
 
-- [ ]   Set the \"secure\" attribute for cookies transmitted over an TLS connection
+- [ ] Enforce authorization checks on every request, including those made by server‑side scripts or background processes.
 
-- [ ]   Set cookies with the HttpOnly attribute, unless you specifically
-    require client-side scripts within your application to read or set
-    a cookie\'s value
+- [ ] Segregate privileged logic from non‑privileged application code.
 
-## Access control
+- [ ] Restrict access to files and resources—including those outside the application’s direct control—to authorized users only.
 
-- [ ]   Use only trusted system objects, e.g. server side session objects,
-    for making access authorization decisions
+- [ ] Restrict access to protected URLs to authorized users.
 
-- [ ]   Use a single site-wide component to check access authorization. This
-    includes libraries that call external authorization services
+- [ ] Restrict access to protected functions to authorized users.
 
-- [ ]   Access controls should fail securely
+- [ ] Restrict direct object references to authorized users.
 
-- [ ]   Deny all access if the application cannot access its security
-    configuration information
+- [ ] Restrict access to internal services to authorized users.
 
-- [ ]   Enforce authorization controls on every request, including those made by server side scripts
+- [ ] Restrict access to application data to authorized users.
 
-- [ ]   Segregate privileged logic from other application code
+- [ ] Restrict access to user attributes, data attributes, and policy information used in authorization decisions.
 
-- [ ]   Restrict access to files or other resources, including those outside
-    the application\'s direct control, to only authorized users
+- [ ] Restrict access to security‑relevant configuration information to authorized users.
 
-- [ ]   Restrict access to protected URLs to only authorized users
+- [ ] Ensure server‑side implementation of access control rules matches the presentation‑layer representation.
 
-- [ ]   Restrict access to protected functions to only authorized users
+- [ ] When client‑side state must be stored, use server‑side integrity checks and encryption to detect tampering.
 
-- [ ]   Restrict direct object references to only authorized users
+- [ ] Enforce application logic flows to comply with defined business rules.
 
-- [ ]   Restrict access to services to only authorized users
+- [ ] Limit the number of transactions a user or device can perform within a defined period to deter automated attacks.
 
-- [ ]   Restrict access to application data to only authorized users
+- [ ] Use the “Referer” header only as a supplemental check; never rely on it as the sole authorization mechanism.
 
-- [ ]   Restrict access to user and data attributes and policy information used by access controls
+- [ ] For long‑lived authenticated sessions, periodically re‑validate user authorization and terminate the session if privileges have changed.
 
-- [ ]   Restrict access security-relevant configuration information to only authorized users
+- [ ] Implement account auditing and disable unused accounts.
 
-- [ ]   Server side implementation and presentation layer representations of access control rules must match
+- [ ] Ensure the application supports disabling accounts and terminating sessions when authorization ceases.
 
-- [ ]   If state data must be stored on the client, use encryption and integrity checking on the server side
-    to detect state tampering
+- [ ] Assign the least privilege possible to service accounts or accounts used for external system connections.
 
-- [ ]   Enforce application logic flows to comply with business rules
+- [ ] Maintain an Access Control Policy documenting business rules, data types, authorization criteria, and provisioning processes for both data and system resources.
 
-- [ ]   Limit the number of transactions a single user or device can perform
-    in a given period of time, low enough to deter automated attacks
-    but above the actual business requirement
+## 6. Cryptographic practices
 
-- [ ]   Use the \"referer\" header as a supplemental check only, it should
-    never be the sole authorization check as it is can be spoofed
+- [ ] Implement all cryptographic functions on a trusted system to protect secrets from unauthorized access.
 
-- [ ]   If long authenticated sessions are allowed, periodically re-validate
-    a user's authorization to ensure that their privileges have not
-    changed and if they have, log the user out and force them to
-    re-authenticate
+- [ ] Protect all secrets from unauthorized disclosure, modification, or misuse.
 
-- [ ]   Implement account auditing and enforce the disabling of unused accounts
+- [ ] Ensure cryptographic modules fail securely.
 
-- [ ]   The application must support disabling of accounts
-    and terminating sessions when authorization ceases
+- [ ] Generate all random numbers, random file names, random GUIDs, and random strings using an approved cryptographic random number generator.
 
-- [ ]   Service accounts or accounts supporting connections to or from
-    external systems should have the least privilege possible
+- [ ] Use cryptographic modules that comply with FIPS 140‑2 or an equivalent standard.
 
-- [ ]   Create an Access Control Policy to document an application\'s
-    business rules, data types and access authorization criteria
-    and/or processes so that access can be properly provisioned and
-    controlled. This includes identifying access requirements for both
-    the data and system resources
+- [ ] Establish and follow a documented policy and process for cryptographic key management, including generation, distribution, rotation, storage, and destruction.
 
-## Cryptographic practices
+## 7. Error handling and logging
 
-- [ ]   All cryptographic functions used to protect secrets from the
-    application user must be implemented on a trusted system
+- [ ] Do not disclose sensitive information in error responses, including system details, session identifiers, or account information.
 
-- [ ]   Protect secrets from unauthorized access
+- [ ] Use error handlers that do not display debugging information or stack traces.
 
-- [ ]   Cryptographic modules should fail securely
+- [ ] Provide generic error messages and use custom error pages.
 
-- [ ]   All random numbers, random file names, random GUIDs, and random
-    strings should be generated using the cryptographic module's
-    approved random number generator
+- [ ] Ensure the application handles its own errors rather than relying on server configuration defaults.
 
-- [ ]   Cryptographic modules used by the application should be compliant to
-    FIPS 140-2 or an equivalent standard
+- [ ] Properly release allocated memory and resources when error conditions occur.
 
-- [ ]   Establish and utilize a policy and process for how cryptographic
-    keys will be managed
+- [ ] Ensure error‑handling logic associated with security controls denies access by default.
 
-## Error handling and logging
+- [ ] Implement all logging controls on a trusted system.
 
-- [ ]   Do not disclose sensitive information in error responses, including
-    system details, session identifiers or account information
+- [ ] Log both successful and failed security‑relevant events.
 
-- [ ]   Use error handlers that do not display debugging or stack trace information
+- [ ] Ensure logs contain sufficient detail to support security monitoring and forensic analysis.
 
-- [ ]   Implement generic error messages and use custom error pages
+- [ ] Ensure log entries containing untrusted data cannot be executed as code in log viewers or analysis tools.
 
-- [ ]   The application should handle application errors and not rely on the server configuration
+- [ ] Restrict access to logs to authorized individuals only.
 
-- [ ]   Properly free allocated memory when error conditions occur
+- [ ] Use a centralized routine for all logging operations.
 
-- [ ]   Error handling logic associated with security controls should deny access by default
+- [ ] Do not store sensitive information in logs, including passwords, session identifiers, or unnecessary system details.
 
-- [ ]   All logging controls should be implemented on a trusted system
+- [ ] Ensure a mechanism exists to perform regular log analysis.
 
-- [ ]   Logging controls should support both success and failure of specified security events
+- [ ] Log all input validation failures.
 
-- [ ]   Ensure logs contain important log event data
+- [ ] Log all authentication attempts, especially failures.
 
-- [ ]   Ensure log entries that include un-trusted data will not execute as
-    code in the intended log viewing interface or software
+- [ ] Log all access control failures.
 
-- [ ]   Restrict access to logs to only authorized individuals
+- [ ] Log all apparent tampering events, including unexpected changes to state data.
 
-- [ ]   Utilize a central routine for all logging operations
+- [ ] Log attempts to use invalid or expired session tokens.
 
-- [ ]   Do not store sensitive information in logs, including unnecessary
-    system details, session identifiers or passwords
+- [ ] Log all system exceptions.
 
-- [ ]   Ensure that a mechanism exists to conduct log analysis
+- [ ] Log all administrative actions, including changes to security configuration settings.
 
-- [ ]   Log all input validation failures
+- [ ] Log all backend TLS connection failures.
 
-- [ ]   Log all authentication attempts, especially failures
+- [ ] Log cryptographic module failures.
 
-- [ ]   Log all access control failures
+- [ ] Use cryptographic hash functions to protect log integrity and detect tampering.
 
-- [ ]   Log all apparent tampering events, including unexpected changes to state data
+## 8. Data protection
 
-- [ ]   Log attempts to connect with invalid or expired session tokens
+- [ ] Implement least privilege by restricting users to only the functionality, data, and system information required to perform their tasks.
 
-- [ ]   Log all system exceptions
+- [ ] Protect all cached or temporary copies of sensitive data stored on the server from unauthorized access, and securely purge temporary files as soon as they are no longer required.
 
-- [ ]   Log all administrative functions, including changes to the security configuration settings
+- [ ] Encrypt highly sensitive stored information, including authentication verification data, even when stored on the server side.
 
-- [ ]   Log all backend TLS connection failures
+- [ ] Prevent server‑side source code from being downloaded or exposed to users.
 
-- [ ]   Log cryptographic module failures
+- [ ] Do not store passwords, connection strings, or other sensitive information in clear text or in any non‑cryptographically secure manner on the client side.
 
-- [ ]   Use a cryptographic hash function to validate log entry integrity
+- [ ] Remove comments in production code that may reveal backend system details or other sensitive information.
 
-## Data protection
+- [ ] Remove unnecessary application and system documentation that could provide useful information to attackers.
 
-- [ ]   Implement least privilege, restrict users to only the functionality,
-    data and system information that is required to perform their
-    tasks
+- [ ] Do not include sensitive information in HTTP GET request parameters.
 
-- [ ]   Protect all cached or temporary copies of sensitive data stored on
-    the server from unauthorized access and purge those temporary
-    working files a soon as they are no longer required.
+- [ ] Disable autocomplete features on forms that contain sensitive information, including authentication fields.
 
-- [ ]   Encrypt highly sensitive stored information, such as authentication
-    verification data, even if on the server side
+- [ ] Disable client‑side caching on pages that display or process sensitive information.
 
-- [ ]   Protect server-side source-code from being downloaded by a user
+- [ ] Ensure the application supports secure removal of sensitive data when it is no longer required.
 
-- [ ]   Do not store passwords, connection strings or other sensitive
-    information in clear text or in any non-cryptographically secure
-    manner on the client side
+- [ ] Implement appropriate access controls for sensitive data stored on the server, including cached data, temporary files, and data intended only for specific system users.
 
-- [ ]   Remove comments in user accessible production code that may reveal
-    backend system or other sensitive information
+## 9. Communication security
 
-- [ ]   Remove unnecessary application and system documentation as this can
-    reveal useful information to attackers
+- [ ] Implement encryption for the transmission of all sensitive information, including the use of TLS to protect connections. Supplement TLS with additional encryption for sensitive files or non‑HTTP protocols when required.
 
-- [ ]   Do not include sensitive information in HTTP GET request parameters
+- [ ] Ensure TLS certificates are valid, correctly bound to the domain name, unexpired, and installed with all required intermediate certificates.
 
-- [ ]   Disable auto complete features on forms expected to contain
-    sensitive information, including authentication
+- [ ] Prevent insecure fallback by ensuring failed TLS connections do not revert to unencrypted communication.
 
-- [ ]   Disable client side caching on pages containing sensitive information
+- [ ] Use TLS for all authenticated content and for all transmissions involving sensitive information.
 
-- [ ]   The application should support the removal of sensitive data when
-    that data is no longer required
+- [ ] Use TLS for all connections to external systems that handle sensitive information or perform sensitive operations.
 
-- [ ]   Implement appropriate access controls for sensitive data stored on
-    the server. This includes cached data, temporary files and data
-    that should be accessible only by specific system users
+- [ ] Standardize on a single, well‑configured TLS implementation across the application.
 
-## Communication security
+- [ ] Specify character encodings for all connections to ensure consistent and secure data handling.
 
-- [ ]   Implement encryption for the transmission of all sensitive
-    information. This should include TLS for protecting the connection
-    and may be supplemented by discrete encryption of sensitive files
-    or non-HTTP based connections
+- [ ] Filter or remove sensitive information from HTTP Referer headers when linking to external sites.
 
-- [ ]   TLS certificates should be valid and have the correct domain name,
-    not be expired, and be installed with intermediate certificates
-    when required
+## 10. System configuration
 
-- [ ]   Failed TLS connections should not fall back to an insecure connection
+- [ ] Ensure all servers, frameworks, and system components run the latest approved versions.
 
-- [ ]   Utilize TLS connections for all content requiring authenticated access and for all other sensitive information
+- [ ] Apply all security patches for the versions in use and maintain an established patch‑management process.
 
-- [ ]   Utilize TLS for connections to external systems that involve sensitive information or functions
+- [ ] Disable directory listings on all web servers.
 
-- [ ]   Utilize a single standard TLS implementation that is configured appropriately
+- [ ] Restrict web server, process, and service accounts to the least privileges required.
 
-- [ ]   Specify character encodings for all connections
+- [ ] Ensure all components fail securely when exceptions occur.
 
-- [ ]   Filter parameters containing sensitive information from the HTTP referer, when linking to external sites
+- [ ] Remove all unnecessary functionality, services, and files from production systems.
 
-## System configuration
+- [ ] Remove test code, debugging utilities, and any functionality not intended for production before deployment.
 
-- [ ]   Ensure servers, frameworks and system components are running the latest approved version
+- [ ] Prevent disclosure of directory structures in robots.txt by placing non‑public directories under an isolated parent directory.
 
-- [ ]   Ensure servers, frameworks and system components have all patches issued for the version in use
+- [ ] Define which HTTP methods (e.g., GET, POST) the application supports and enforce method restrictions per page or endpoint.
 
-- [ ]   Turn off directory listings
+- [ ] Disable all unnecessary HTTP methods.
 
-- [ ]   Restrict the web server, process and service accounts to the least privileges possible
+- [ ] Ensure consistent configuration across all supported HTTP protocol versions and understand any differences.
 
-- [ ]   When exceptions occur, fail securely
+- [ ] Remove unnecessary information from HTTP response headers, including OS details, web server versions, and framework identifiers.
 
-- [ ]   Remove all unnecessary functionality and files
+- [ ] Ensure the application’s security configuration store can be exported in a human‑readable format for auditing.
 
-- [ ]   Remove test code or any functionality not intended for production, prior to deployment
+- [ ] Implement an asset management system and register all system components and software.
 
-- [ ]   Prevent disclosure of your directory structure in the robots.txt
-    file by placing directories not intended for public indexing into
-    an isolated parent directory
+- [ ] Isolate development and testing environments from the production network and restrict access to authorized personnel only.
 
-- [ ]   Define which HTTP methods, Get or Post, the application will support
-    and whether it will be handled differently in different pages in
-    the application
+- [ ] Implement a software change‑control system to manage and record changes to code in both development and production environments.
 
-- [ ]   Disable unnecessary HTTP methods
+## 11. Database security
 
-- [ ]   If the web server handles different versions of HTTP ensure that they
-    are configured in a similar manner and ensure any differences are understood
+- [ ] Use strongly typed, parameterized queries for all database interactions.
 
-- [ ]   Remove unnecessary information from HTTP response headers related to
-    the OS, web-server version and application frameworks
+- [ ] Apply input validation and output encoding to all data sent to the database, and block execution if validation fails.
 
-- [ ]   The security configuration store for the application should be able
-    to be output in human readable form to support auditing
+- [ ] Ensure all variables used in database operations are strongly typed.
 
-- [ ]   Implement an asset management system and register system components
-    and software in it
+- [ ] Access the database using the lowest level of privilege required for the operation.
 
-- [ ]   Isolate development environments from the production network and
-    provide access only to authorized development and test groups
+- [ ] Use secure, protected credentials for all database connections.
 
-- [ ]   Implement a software change control system to manage and record
-    changes to the code both in development and production
+- [ ] Do not hard‑code connection strings in the application. Store them in a secure configuration file on a trusted system, and encrypt them.
 
-## Database security
+- [ ] Use stored procedures to abstract data access and remove direct permissions to base tables.
 
-- [ ]   Use strongly typed parameterized queries
+- [ ] Close database connections as soon as operations are complete.
 
-- [ ]   Utilize input validation and output encoding and be sure to address
-    meta characters. If these fail, do not run the database command
+- [ ] Remove or change all default administrative passwords for the database.
 
-- [ ]   Ensure that variables are strongly typed
+- [ ] Disable all unnecessary database functionality and services.
 
-- [ ]   The application should use the lowest possible level of privilege
-    when accessing the database
+- [ ] Remove unnecessary default vendor content, such as sample schemas or test data.
 
-- [ ]   Use secure credentials for database access
+- [ ] Disable any default accounts not required to support business operations.
 
-- [ ]   Connection strings should not be hard coded within the application.
-    Connection strings should be stored in a separate configuration
-    file on a trusted system and they should be encrypted.
+- [ ] Use separate database credentials for each trust level (e.g., standard user, read‑only user, guest, administrator).
 
-- [ ]   Use stored procedures to abstract data access and allow for the
-    removal of permissions to the base tables in the database
+## 12. File management
 
-- [ ]   Close the connection as soon as possible
+- [ ] Do not pass user‑supplied data directly to any dynamic include or file‑execution function.
 
-- [ ]   Remove or change all default database administrative passwords
+- [ ] Require authentication before allowing any file upload.
 
-- [ ]   Turn off all unnecessary database functionality
+- [ ] Restrict uploadable file types to only those required for business purposes.
 
-- [ ]   Remove unnecessary default vendor content (for example sample schemas)
+- [ ] Validate uploaded files by inspecting file headers or MIME types rather than relying on file extensions.
 
-- [ ]   Disable any default accounts that are not required to support business requirements
+- [ ] Store uploaded files outside the web‑accessible directory structure.
 
-- [ ]   The application should connect to the database with different
-    credentials for every trust distinction (for example user, read-only
-    user, guest, administrators)
+- [ ] Prevent or restrict the uploading of any file type that could be interpreted or executed by the web server.
 
-## File management
+- [ ] Disable execution privileges on all file‑upload directories.
 
-- [ ]   Do not pass user supplied data directly to any dynamic include function
+- [ ] Implement safe file‑upload handling in UNIX environments by mounting the upload directory as a logical drive or using a chrooted environment.
 
-- [ ]   Require authentication before allowing a file to be uploaded
+- [ ] When referencing existing files, use an allow‑list of permitted file names and types.
 
-- [ ]   Limit the type of files that can be uploaded to only those types
-    that are needed for business purposes
+- [ ] Do not pass user‑supplied data into dynamic redirects.
 
-- [ ]   Validate uploaded files are the expected type by checking file
-    headers rather than by file extension
+- [ ] Do not accept directory or file paths from users; instead, map index values to predefined, validated paths.
 
-- [ ]   Do not save files in the same web context as the application
+- [ ] Never send absolute file paths to the client.
 
-- [ ]   Prevent or restrict the uploading of any file that may be
-    interpreted by the web server.
+- [ ] Ensure application files and resources are read‑only wherever possible.
 
-- [ ]   Turn off execution privileges on file upload directories
+- [ ] Scan all user‑uploaded files for viruses and malware before processing or storage.
 
-- [ ]   Implement safe uploading in UNIX by mounting the targeted file
-    directory as a logical drive using the associated path or the
-    chrooted environment
+## 13. Memory management
 
-- [ ]   When referencing existing files, use an allow-list of allowed file names and types
+- [ ] Apply strict input and output controls when handling untrusted data.
 
-- [ ]   Do not pass user supplied data into a dynamic redirect
+- [ ] Ensure all buffers are sized correctly and validated before use.
 
-- [ ]   Do not pass directory or file paths, use index values mapped to pre-defined list of paths
+- [ ] When using functions that accept a byte count, ensure NULL termination is handled safely and explicitly.
 
-- [ ]   Never send the absolute file path to the client
+- [ ] Validate buffer boundaries during loops or repeated operations to prevent overflow conditions.
 
-- [ ]   Ensure application files and resources are read-only
+- [ ] Truncate all input strings to a reasonable, predefined length before passing them to other functions.
 
-- [ ]   Scan user uploaded files for viruses and malware
+- [ ] Explicitly close all resources when they are no longer needed; do not rely solely on garbage collection.
 
-## Memory management
+- [ ] Use non‑executable stacks and memory protections when supported by the platform.
 
-- [ ]   Utilize input and output controls for untrusted data
+- [ ] Avoid using functions known to be vulnerable or unsafe.
 
-- [ ]   Check that the buffer is as large as specified
+- [ ] Free allocated memory properly upon function completion and at all exit points.
 
-- [ ]   When using functions that accept a number of bytes ensure that NULL terminatation is handled correctly
+- [ ] Overwrite sensitive information stored in memory before freeing it to prevent data leakage.
 
-- [ ]   Check buffer boundaries if calling the function in a loop and protect against overflow
+## 14. General coding practices
 
-- [ ]   Truncate all input strings to a reasonable length before passing them to other functions
+- [ ] Use tested and approved managed code whenever possible instead of creating new unmanaged code for common tasks.
 
-- [ ]   Specifically close resources, don't rely on garbage collection
+- [ ] Use task‑specific, built‑in APIs to perform operating system operations. Avoid issuing direct OS commands, especially through application‑initiated command shells.
 
-- [ ]   Use non-executable stacks when available
+- [ ] Use checksums or cryptographic hashes to verify the integrity of interpreted code, libraries, executables, and configuration files.
 
-- [ ]   Avoid the use of known vulnerable functions
+- [ ] Use locking or synchronization mechanisms to prevent race conditions and ensure safe handling of concurrent requests.
 
-- [ ]   Properly free allocated memory upon the completion of functions and at all exit points
+- [ ] Protect shared variables and resources from improper concurrent access.
 
-- [ ]   Overwrite any sensitive information stored in allocated memory at all exit points from the function
+- [ ] Explicitly initialize all variables and data stores during declaration or immediately before first use.
 
-## General coding practices
+- [ ] When elevated privileges are required, raise privileges as late as possible and drop them as soon as they are no longer needed.
 
-- [ ]   Use tested and approved managed code rather than creating new unmanaged code for common tasks
+- [ ] Prevent calculation errors by understanding the underlying numeric representation and behavior of the programming language.
 
-- [ ]   Utilize task specific built-in APIs to conduct operating system
-    tasks. Do not allow the application to issue commands directly to
-    the Operating System, especially through the use of application
-    initiated command shells
+- [ ] Do not pass user‑supplied data to any dynamic execution function (e.g., eval, exec).
 
-- [ ]   Use checksums or hashes to verify the integrity of interpreted code,
-    libraries, executables, and configuration files
+- [ ] Restrict users from generating new code or modifying existing code within the application.
 
-- [ ]   Utilize locking to prevent multiple simultaneous requests or use a
-    synchronization mechanism to prevent race conditions
+- [ ] Review all secondary applications, third‑party code, and libraries to confirm business necessity and validate safe functionality.
 
-- [ ]   Protect shared variables and resources from inappropriate concurrent
-    access
+- [ ] Implement secure update mechanisms that use encrypted channels and verify update integrity.
 
-- [ ]   Explicitly initialize all your variables and other data stores,
-    either during declaration or just before the first usage
 
-- [ ]   In cases where the application must run with elevated privileges,
-    raise privileges as late as possible, and drop them as soon as
-    possible
 
-- [ ]   Avoid calculation errors by understanding your programming language\'s underlying representation
-
-- [ ]   Do not pass user supplied data to any dynamic execution function
-
-- [ ]   Restrict users from generating new code or altering existing code
-
-- [ ]   Review all secondary applications, third party code and libraries to
-    determine business necessity and validate safe functionality
-
-- [ ]   Implement safe updating using encrypted channels
-
-\newpage
